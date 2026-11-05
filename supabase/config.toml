@@ -1,0 +1,2 @@
+[functions.candidate-share]
+verify_jwt = false
