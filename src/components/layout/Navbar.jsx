@@ -1,36 +1,29 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { useApp } from '@/context/AppContext';
 import {
   Trophy,
   Menu,
   X,
   UserCheck,
+  LogIn,
   ShieldAlert,
-  ArrowRight,
-  ChevronDown
 } from 'lucide-react';
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { eventSettings, session, signOut, showToast } = useApp();
-
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      showToast('Déconnexion réussie', '', 'success');
-    } catch (error) {
-      showToast('Déconnexion impossible', error.message, 'destructive');
-    }
-  };
+  const { eventSettings, session } = useApp();
+  const accountAction = session
+    ? { label: 'Mon espace', path: '/candidat-dashboard' }
+    : { label: 'Connexion', path: '/connexion' };
 
   const navLinks = [
     { label: "Candidats", path: "/candidats" },
     { label: "52 Prix", path: "/categories" },
     { label: "Classement", path: "/classement" },
     { label: "Palmarès", path: "/resultats" },
+    { label: "Contact", path: "/contact" },
   ];
 
   const isActive = (path) => {
@@ -95,28 +88,6 @@ export function Navbar() {
 
             {/* Right actions */}
             <div className="hidden sm:flex items-center gap-3">
-
-              {session ? (
-                <>
-                  <Link to="/candidat-dashboard">
-                    <button className="flex items-center gap-1.5 text-sm text-stone-600 hover:text-[#0F1117] font-medium transition-colors">
-                      <UserCheck className="w-4 h-4" />
-                      Mon espace
-                    </button>
-                  </Link>
-                  <div className="w-px h-5 bg-stone-200" />
-                  <button onClick={handleSignOut} className="text-sm text-stone-400 hover:text-stone-700 transition-colors">
-                    Déconnexion
-                  </button>
-                </>
-              ) : (
-                <Link to="/connexion">
-                  <button className="text-sm text-stone-500 hover:text-[#0F1117] font-medium transition-colors">
-                    Connexion
-                  </button>
-                </Link>
-              )}
-
               {/* Primary CTA */}
               <Link to="/candidats">
                 <button className="ml-2 h-10 px-5 bg-[#0F1117] text-white text-sm font-semibold hover:bg-[#B8973E] transition-colors duration-300 tracking-wide">
@@ -124,17 +95,18 @@ export function Navbar() {
                 </button>
               </Link>
 
-              <Link to="/candidater">
+              <Link to={accountAction.path}>
                 <button className="h-10 px-5 border border-stone-300 text-[#0F1117] text-sm font-semibold hover:border-[#B8973E] hover:text-[#B8973E] transition-colors duration-300 tracking-wide">
-                  Candidater
+                  {session ? <UserCheck className="mr-1.5 inline h-4 w-4" /> : <LogIn className="mr-1.5 inline h-4 w-4" />}
+                  {accountAction.label}
                 </button>
               </Link>
 
-              <Link to="/admin" title="Administration">
+              {/* <Link to="/admin" title="Administration">
                 <button className="p-2 text-stone-300 hover:text-stone-600 transition-colors">
                   <ShieldAlert className="w-4 h-4" />
                 </button>
-              </Link>
+              </Link> */}
             </div>
 
             {/* Mobile toggle */}
@@ -172,29 +144,12 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-4 space-y-2">
-            <Link to="/candidater" onClick={() => setMobileMenuOpen(false)}>
+            <Link to={accountAction.path} onClick={() => setMobileMenuOpen(false)}>
               <button className="w-full h-11 border border-stone-300 text-sm font-semibold text-[#0F1117]">
-                Candidater
+                {session ? <UserCheck className="mr-2 inline h-4 w-4" /> : <LogIn className="mr-2 inline h-4 w-4" />}
+                {accountAction.label}
               </button>
             </Link>
-            {session ? (
-              <>
-                <Link to="/candidat-dashboard" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full h-11 bg-stone-100 text-sm font-semibold text-stone-700">
-                    Mon espace candidat
-                  </button>
-                </Link>
-                <button onClick={handleSignOut} className="w-full text-sm text-stone-400 py-2">
-                  Déconnexion
-                </button>
-              </>
-            ) : (
-              <Link to="/connexion" onClick={() => setMobileMenuOpen(false)}>
-                <button className="w-full h-11 bg-stone-100 text-sm font-semibold text-stone-700">
-                  Connexion
-                </button>
-              </Link>
-            )}
             <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>
               <button className="w-full text-sm text-stone-400 py-2 flex items-center justify-center gap-2">
                 <ShieldAlert className="w-4 h-4" /> Administration

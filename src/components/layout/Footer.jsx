@@ -83,11 +83,14 @@ export function Footer() {
                 <Mail className="w-3.5 h-3.5 text-[#B8973E] shrink-0" />
                 support@primart2028.org
               </a>
-              <div className="flex items-center gap-2">
+              <a href="tel:+22870000000" className="flex items-center gap-2 hover:text-[#B8973E] transition-colors">
                 <Phone className="w-3.5 h-3.5 text-[#B8973E] shrink-0" />
-                +225 27 20 00 00 00
-              </div>
+                +228 70 00 00 00
+              </a>
             </div>
+            <Link to="/contact" className="inline-flex items-center gap-1.5 font-semibold text-[#B8973E] hover:text-amber-300 transition-colors">
+              Toutes les coordonnées <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
             <div className="pt-2 text-[10px] text-stone-600 leading-relaxed border-t border-white/5 pt-3">
               Paiements : Wave · Orange Money · MTN · Moov · CB Visa & Mastercard
             </div>

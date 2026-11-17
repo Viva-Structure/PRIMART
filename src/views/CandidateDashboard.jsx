@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
+import { CandidateLayout } from '@/components/layout/CandidateLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { getCandidateShareUrl } from '@/lib/candidateShareUrl';
 import {
   Trophy,
@@ -26,10 +27,11 @@ import {
 } from 'lucide-react';
 
 export default function CandidateDashboard() {
-  const { candidates, updateCandidate, showToast } = useApp();
+  const { candidates, updateCandidate, showToast, loading } = useApp();
   
   const [copiedLink, setCopiedLink] = useState(false);
   const [copiedText, setCopiedText] = useState(false);
+  const [activeSection, setActiveSection] = useState('promotion');
 
   const candidate = candidates.find(c => c.isOwner);
 
@@ -50,15 +52,25 @@ export default function CandidateDashboard() {
     setEditVideoUrl(candidate?.videoUrl || '');
   }
 
+  if (loading) {
+    return (
+      <CandidateLayout candidate={candidate} activeSection={activeSection} onSectionChange={setActiveSection}>
+        <p role="status" className="py-16 text-center text-sm text-slate-600">Chargement de votre dossier…</p>
+      </CandidateLayout>
+    );
+  }
+
   if (!candidate) {
     return (
-      <section className="max-w-xl mx-auto px-4 py-16 text-center space-y-4">
-        <h1 className="text-2xl font-bold text-slate-900">Aucune candidature liée à ce compte</h1>
-        <p className="text-sm text-slate-600">Déposez un dossier pour accéder à votre espace candidat.</p>
-        <Link to="/candidater" className="inline-flex rounded-xl bg-amber-500 px-4 py-2 text-sm font-bold text-slate-950">
-          Déposer une candidature
-        </Link>
-      </section>
+      <CandidateLayout candidate={null} activeSection={activeSection} onSectionChange={setActiveSection}>
+        <section className="mx-auto max-w-xl space-y-4 py-16 text-center">
+          <h1 className="text-2xl font-bold text-slate-900">Aucune candidature liée à ce compte</h1>
+          <p className="text-sm text-slate-600">Déposez un dossier pour accéder à votre espace candidat.</p>
+          <Link to="/candidater" className="inline-flex rounded-xl bg-amber-500 px-4 py-2 text-sm font-bold text-slate-950">
+            Déposer une candidature
+          </Link>
+        </section>
+      </CandidateLayout>
     );
   }
 
@@ -101,32 +113,21 @@ export default function CandidateDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      
-      {/* Candidate account */}
-      <div className="p-6 rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <img
-            src={candidate.photo}
-            alt={candidate.name}
-            className="w-16 h-16 rounded-2xl object-cover ring-2 ring-amber-500/40 shadow-lg"
-          />
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-extrabold text-slate-900 font-display">
-                Espace Candidat : {candidate.stageName || candidate.name}
-              </h1>
-              <Badge variant="success" className="text-xs">
-                {candidate.status}
-              </Badge>
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Prix visé : <strong className="text-amber-600">{candidate.prize}</strong> ({candidate.category})
-            </p>
-          </div>
-        </div>
+    <CandidateLayout candidate={candidate} activeSection={activeSection} onSectionChange={setActiveSection}>
+    <div className="space-y-8">
 
-      </div>
+      <header className="flex flex-col gap-3 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-600">Espace candidat</p>
+          <h1 className="mt-1 font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">
+            {candidate.stageName || candidate.name}
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            {candidate.prize} · {candidate.category}
+          </p>
+        </div>
+        <Badge variant="success" className="w-fit">{candidate.status}</Badge>
+      </header>
 
       {/* KPI Cards Row (Section 11) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -189,18 +190,7 @@ export default function CandidateDashboard() {
       </div>
 
       {/* Tabs for Candidate actions */}
-      <Tabs defaultValue="promotion" className="space-y-6">
-        <TabsList className="grid grid-cols-3 max-w-md">
-          <TabsTrigger value="promotion" className="text-xs">
-            Outils de Promotion
-          </TabsTrigger>
-          <TabsTrigger value="profile" className="text-xs">
-            Modifier mon Profil
-          </TabsTrigger>
-          <TabsTrigger value="status" className="text-xs">
-            Suivi & Statut
-          </TabsTrigger>
-        </TabsList>
+      <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
 
         {/* TAB 1: PROMOTION TOOLKIT */}
         <TabsContent value="promotion" className="space-y-6">
@@ -357,5 +347,6 @@ export default function CandidateDashboard() {
       </Tabs>
 
     </div>
+    </CandidateLayout>
   );
 }

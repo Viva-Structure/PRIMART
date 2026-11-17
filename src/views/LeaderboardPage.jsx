@@ -102,8 +102,8 @@ export default function LeaderboardPage() {
       {/* Category Tabs & Mode Toggle */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         
-        {/* Category switcher */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 max-w-full">
+        {/* Category switcher (Mobile touch-friendly horizontal track) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 max-w-full scrollbar-none touch-pan-x -mx-1 px-1 sm:mx-0 sm:px-0">
           <button
             onClick={() => setSelectedCategory("Tous")}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${

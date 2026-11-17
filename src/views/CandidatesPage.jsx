@@ -108,8 +108,8 @@ export default function CandidatesPage() {
       {/* Filter Toolbar */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-4">
         
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {/* Category Pills (Mobile touch-friendly horizontal track) */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none touch-pan-x -mx-1 px-1 sm:mx-0 sm:px-0 scroll-smooth">
           <button
             onClick={() => handleCategoryChange('Tous')}
             className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
@@ -178,10 +178,10 @@ export default function CandidatesPage() {
 
           {/* Reset button */}
           <Button
-            variant="outline"
+            variant="gold"
             size="default"
             onClick={resetFilters}
-            className="text-xs border-slate-200 hover:bg-slate-50 text-slate-700 flex items-center justify-center gap-2"
+            className="text-xs border-slate-200 hover:bg-slate-50 text-black-700 flex items-center justify-center gap-2"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Réinitialiser les filtres

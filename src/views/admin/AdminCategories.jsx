@@ -724,7 +724,7 @@ export default function AdminCategories() {
             <Button
               size="sm"
               variant="outline"
-              className="text-xs text-slate-700 hover:text-slate-900"
+              className="text-xs text-slate-700 hover:text-white"
               onClick={() => refreshData()}
               disabled={loading}
               title="Synchroniser avec la base Supabase"
@@ -738,7 +738,7 @@ export default function AdminCategories() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="text-xs"
+                  className="text-xs text-slate-700"
                   onClick={() => {
                     setEditingPrize(null);
                     setPrizeDialogOpen(true);

@@ -1,0 +1,21 @@
+{
+  "name": "PRIMART 2028 - Célébration des Talents",
+  "short_name": "PRIMART",
+  "description": "Plateforme officielle de vote et de célébration des talents culturels PRIMART 2028.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0F1117",
+  "theme_color": "#0F1117",
+  "categories": ["entertainment", "culture", "events"],
+  "icons": [
+    {
+      "src": "/primart.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

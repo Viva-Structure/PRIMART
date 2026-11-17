@@ -2,7 +2,7 @@ export const CATEGORIES = [
   {
     id: "musique",
     name: "Musique",
-    icon: "Music",
+    icon: "/noteMusic.png",
     description: "Les meilleurs artistes, voix, styles urbains, traditionnels et révélations musicales de l'Afrique et de la diaspora.",
     prizesCount: 24,
     prizes: [
@@ -35,7 +35,7 @@ export const CATEGORIES = [
   {
     id: "danse",
     name: "Danse et performance",
-    icon: "Sparkles",
+    icon: "/danse.png",
     description: "Les danseurs, chorégraphes, DJs et performeurs scéniques qui enflamment les scènes et le public.",
     prizesCount: 7,
     prizes: [
@@ -51,7 +51,7 @@ export const CATEGORIES = [
   {
     id: "arts",
     name: "Arts et créativité",
-    icon: "Palette",
+    icon: "/art.png",
     description: "Peintres, photographes, réalisateurs, stylistes et créateurs visuels qui façonnent l'esthétique contemporaine.",
     prizesCount: 10,
     prizes: [
@@ -70,7 +70,7 @@ export const CATEGORIES = [
   {
     id: "industrie",
     name: "Industrie musicale",
-    icon: "Briefcase",
+    icon: "/microphone.png",
     description: "Les bâtisseurs de l'ombre, producteurs, managers, beatmakers et lieux culturels incontournables.",
     prizesCount: 8,
     prizes: [
@@ -87,7 +87,7 @@ export const CATEGORIES = [
   {
     id: "speciaux",
     name: "Prix spéciaux",
-    icon: "Trophy",
+    icon: "/trophee.png",
     description: "Les distinctions suprêmes décernées aux figures emblématiques et coups de cœur du festival.",
     prizesCount: 3,
     prizes: [

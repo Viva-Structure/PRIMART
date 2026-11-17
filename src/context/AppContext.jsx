@@ -125,6 +125,42 @@ function mapSuspectVote(row) {
   };
 }
 
+function mapPartnershipStatus(status) {
+  return {
+    pending: 'En attente',
+    approved: 'Accepté',
+    rejected: 'Refusé',
+  }[status] || status;
+}
+
+function mapPartnershipRequest(row) {
+  return {
+    id: row.id,
+    organizationName: row.organization_name,
+    contactName: row.contact_name,
+    email: row.email,
+    phone: row.phone || '',
+    category: row.category,
+    message: row.message,
+    publicDescription: row.public_description || '',
+    website: row.website || '',
+    status: mapPartnershipStatus(row.status),
+    createdAt: row.created_at,
+    reviewedAt: row.reviewed_at,
+  };
+}
+
+function mapPublicPartner(row) {
+  return {
+    id: row.id,
+    organizationName: row.organization_name,
+    category: row.category,
+    publicDescription: row.public_description || '',
+    website: row.website || '',
+    createdAt: row.created_at,
+  };
+}
+
 function mapEventSettings(row) {
   if (!row) return DEFAULT_EVENT_SETTINGS;
   return {
@@ -155,6 +191,8 @@ export function AppProvider({ children }) {
   const [candidates, setCandidates] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [suspectVotes, setSuspectVotes] = useState([]);
+  const [partnershipRequests, setPartnershipRequests] = useState([]);
+  const [approvedPartners, setApprovedPartners] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
   const [eventSettings, setEventSettingsState] = useState(DEFAULT_EVENT_SETTINGS);
   const [voteTotals, setVoteTotals] = useState({ total: 0, free: 0, paid: 0 });
@@ -251,7 +289,9 @@ export function AppProvider({ children }) {
         packsResult,
         transactionResult,
         suspectResult,
-        auditResult
+        auditResult,
+        partnershipRequestsResult,
+        approvedPartnersResult
       ] = await Promise.all([
         supabase.from('categories').select('id,name,description,icon,sort_order').order('sort_order'),
         supabase.from('prizes').select('id,name,category_id,sort_order').order('sort_order'),
@@ -299,12 +339,18 @@ export function AppProvider({ children }) {
           return res;
         }),
         supabase.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(100),
+        userIsAdmin
+          ? supabase.from('partnership_requests').select('*').order('created_at', { ascending: false })
+          : Promise.resolve({ data: [], error: null }),
+        supabase.from('public_partner_profiles').select('*').order('created_at', { ascending: false }),
       ]);
 
       // Ensure critical catalog data loaded
       if (categoryResult.error) throw categoryResult.error;
       if (prizeResult.error) throw prizeResult.error;
       if (packsResult.error) throw packsResult.error;
+      if (partnershipRequestsResult.error) throw partnershipRequestsResult.error;
+      if (approvedPartnersResult.error) throw approvedPartnersResult.error;
 
       const categoriesData = categoryResult.data || [];
       const prizesData = prizeResult.data || [];
@@ -326,6 +372,8 @@ export function AppProvider({ children }) {
       setCandidates(mappedCandidates);
       setTransactions((transactionResult.data || []).map(mapTransaction));
       setSuspectVotes((suspectResult.data || []).map(mapSuspectVote));
+      setPartnershipRequests((partnershipRequestsResult.data || []).map(mapPartnershipRequest));
+      setApprovedPartners((approvedPartnersResult.data || []).map(mapPublicPartner));
       setAuditLogs((auditResult.data || []).map(mapAuditLog));
       setEventSettingsState(mapEventSettings(eventResult.data));
       setVoteTotals({
@@ -340,6 +388,8 @@ export function AppProvider({ children }) {
       setCandidates([]);
       setTransactions([]);
       setSuspectVotes([]);
+      setPartnershipRequests([]);
+      setApprovedPartners([]);
       setAuditLogs([]);
       setPacks([]);
       setCategoriesRaw([]);
@@ -511,6 +561,40 @@ export function AppProvider({ children }) {
     await refreshData();
     showToast('Statut mis à jour', `Candidat passé au statut « ${newStatus} ».`, 'success');
   }, [refreshData, showToast]);
+
+  const submitPartnershipRequest = useCallback(async (request) => {
+    if (!request.consent) throw new Error('Votre accord est nécessaire pour envoyer cette demande.');
+    const { error } = await getSupabaseClient().rpc('submit_partnership_request', {
+      p_organization_name: request.organizationName,
+      p_contact_name: request.contactName,
+      p_email: request.email,
+      p_phone: request.phone || null,
+      p_category: request.category,
+      p_message: request.message,
+      p_public_description: request.publicDescription || '',
+      p_website: request.website || null,
+      p_consent: true,
+    });
+    if (error) throw error;
+  }, []);
+
+  const moderatePartnershipRequest = useCallback(async (requestId, newStatus) => {
+    const status = newStatus === 'Accepté'
+      ? 'approved'
+      : newStatus === 'Refusé'
+        ? 'rejected'
+        : null;
+    if (!status) throw new Error('Statut de partenariat non reconnu.');
+    const { data, error } = await getSupabaseClient()
+      .from('partnership_requests')
+      .update({ status })
+      .eq('id', requestId)
+      .select('id')
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) throw new Error('Cette demande est introuvable ou ne peut plus être modifiée.');
+    await refreshData();
+  }, [refreshData]);
 
   const addCandidate = useCallback(async (candidateData) => {
     const { data: candidateId, error } = await getSupabaseClient().rpc('submit_candidate', {
@@ -732,6 +816,8 @@ export function AppProvider({ children }) {
     candidates,
     transactions,
     suspectVotes,
+    partnershipRequests,
+    approvedPartners,
     auditLogs,
     eventSettings,
     setEventSettings,
@@ -742,6 +828,8 @@ export function AppProvider({ children }) {
     castFreeVote,
     castPaidVote,
     moderateCandidate,
+    submitPartnershipRequest,
+    moderatePartnershipRequest,
     addCandidate,
     uploadCandidatePhoto,
     removeCandidatePhoto,
@@ -778,8 +866,9 @@ export function AppProvider({ children }) {
     dataError,
     refreshData,
   }), [
-    candidates, transactions, suspectVotes, auditLogs, eventSettings, setEventSettings, toasts,
+    candidates, transactions, suspectVotes, partnershipRequests, approvedPartners, auditLogs, eventSettings, setEventSettings, toasts,
     showToast, removeToast, canVoteFree, castFreeVote, castPaidVote, moderateCandidate,
+    submitPartnershipRequest, moderatePartnershipRequest,
     addCandidate, uploadCandidatePhoto, removeCandidatePhoto, updateCandidate, resolveSuspectVote, totalVotesCount, totalFreeVotesCount,
     totalPaidVotesCount, totalRevenueFCFA, packs, categoriesRaw, prizesRaw, votePacksRaw,
     addCategory, updateCategory, deleteCategory, addPrize, updatePrize, deletePrize,

@@ -17,8 +17,235 @@ import {
   FileCheck,
   ShieldCheck,
   Sparkles,
-  AlertCircle
+  AlertCircle,
+  FileText,
+  Clock,
+  CheckSquare,
+  ChevronDown,
+  ChevronUp,
+  Info,
+  HelpCircle
 } from 'lucide-react';
+
+function CandidateDocumentation({ defaultExpanded = true, isCollapsible = false }) {
+  const [isOpen, setIsOpen] = useState(defaultExpanded);
+
+  return (
+    <div className="bg-white rounded-3xl border border-slate-200 shadow-xs overflow-hidden transition-all">
+      {/* Bar / Header */}
+      <div
+        className={`p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+          isCollapsible ? 'cursor-pointer select-none hover:bg-slate-50/80 transition-colors' : ''
+        }`}
+        onClick={isCollapsible ? () => setIsOpen(!isOpen) : undefined}
+      >
+        <div className="flex items-start sm:items-center gap-3.5">
+          <div className="w-10 h-10 rounded-2xl bg-amber-500/15 text-amber-800 flex items-center justify-center shrink-0 border border-amber-500/30">
+            <FileText className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-base sm:text-lg font-black text-slate-900 font-display">
+                Guide Officiel : Étapes & Données Requises pour Candidater
+              </h2>
+              <Badge variant="outline" className="text-[10px] border-amber-400 text-amber-800 bg-amber-50 font-bold">
+                Documentation Officielle
+              </Badge>
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
+              Consultez les informations indispensables, pièces à fournir et le processus de validation avant de postuler.
+            </p>
+          </div>
+        </div>
+
+        {isCollapsible && (
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 px-3 py-1.5 rounded-xl transition-colors shrink-0"
+          >
+            {isOpen ? (
+              <>
+                <span>Masquer le guide</span>
+                <ChevronUp className="w-4 h-4" />
+              </>
+            ) : (
+              <>
+                <span>Consulter le guide complet</span>
+                <ChevronDown className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        )}
+      </div>
+
+      {/* Expanded Content */}
+      {isOpen && (
+        <div className="border-t border-slate-100 p-5 sm:p-6 space-y-6 bg-slate-50/40 animate-in fade-in-50 duration-200">
+          
+          {/* Les 3 Étapes */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-400">
+                Parcours d'inscription en 3 temps
+              </span>
+              <span className="text-[11px] text-amber-800 font-medium">
+                Temps estimé : 5 minutes
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              
+              {/* Étape 1 */}
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xs">
+                    01
+                  </span>
+                  <Badge variant="secondary" className="text-[10px]">Identité</Badge>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm">
+                  Identité & Coordonnées
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Permet au jury et à l'administration de certifier votre candidature :
+                </p>
+                <ul className="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                  <li><strong>Nom de scène / Artiste</strong> : Affiché sur votre fiche de vote</li>
+                  <li><strong>Nom civil complet</strong> : Strictement confidentiel</li>
+                  <li><strong>Âge</strong> : Entre 10 et 99 ans</li>
+                  <li><strong>Pays & Ville</strong> : Lieu de résidence</li>
+                  <li><strong>Téléphone WhatsApp</strong> : Joignable pour les annonces du jury</li>
+                  <li><strong>E-mail</strong> : Lié à votre compte connecté certifié</li>
+                </ul>
+              </div>
+
+              {/* Étape 2 */}
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xs">
+                    02
+                  </span>
+                  <Badge variant="secondary" className="text-[10px]">Compétition</Badge>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm">
+                  Discipline & Prix Officiel
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Positionnement dans la compétition parmi les 52 prix officiels :
+                </p>
+                <ul className="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                  <li><strong>Catégorie majeure</strong> : Musique, Danse, Stand-up & Théâtre, Mode & Arts, Cinéma</li>
+                  <li><strong>Prix officiel visé</strong> : Sélection du trophée convoité</li>
+                  <li><strong>Règle officielle</strong> : 1 seule candidature par catégorie autorisée</li>
+                  <li><strong>Verrouillage</strong> : Choix non modifiable après validation sans dérogation</li>
+                </ul>
+                <div className="pt-1">
+                  <Link
+                    to="/categories"
+                    target="_blank"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-800 hover:underline"
+                  >
+                    Explorer la liste des 52 prix officiels →
+                  </Link>
+                </div>
+              </div>
+
+              {/* Étape 3 */}
+              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="w-7 h-7 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xs">
+                    03
+                  </span>
+                  <Badge variant="secondary" className="text-[10px]">Médias & Bio</Badge>
+                </div>
+                <h3 className="font-bold text-slate-900 text-sm">
+                  Médias, Bio & Réseaux
+                </h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Les éléments qui feront voter le public et convaincront le jury :
+                </p>
+                <ul className="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                  <li><strong>Photo officielle</strong> : Portrait net ou scène (JPG, PNG, max 5 Mo)</li>
+                  <li><strong>Biographie</strong> : Min. 20 caractères (parcours, vision artistique)</li>
+                  <li><strong>Lien Vidéo</strong> : YouTube, TikTok, Reels (très recommandé)</li>
+                  <li><strong>Extrait Audio</strong> : Échantillon sonore (pour musiciens)</li>
+                  <li><strong>Réseaux sociaux</strong> : Instagram, Facebook, TikTok</li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+          {/* Checklist & Déroulement */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            
+            {/* Checklist */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-3">
+              <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wide">
+                <CheckSquare className="w-4 h-4 text-amber-700" />
+                <span>Check-list des éléments à avoir sous la main</span>
+              </div>
+              <ul className="space-y-2 text-xs text-slate-700">
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Une photo de profil de haute qualité bien cadrée (visage ou performance).</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Un court texte de présentation prêt à être copié-collé (au moins 20 caractères).</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Le lien URL de votre meilleure vidéo (YouTube, TikTok ou Instagram Reel).</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                  <span>Un numéro WhatsApp joignable pour les échanges avec la commission d'arbitrage.</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Déroulement après soumission */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 space-y-3">
+              <div className="flex items-center gap-2 text-slate-900 font-bold text-xs uppercase tracking-wide">
+                <Clock className="w-4 h-4 text-amber-600" />
+                <span>Processus après enregistrement</span>
+              </div>
+              <div className="space-y-2.5 text-xs text-slate-600">
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                    1
+                  </span>
+                  <div>
+                    <strong className="text-slate-900">Examen sous 24h à 48h ouvrées :</strong> Le comité vérifie l'adéquation du dossier avec les critères d'éligibilité du prix.
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                    2
+                  </span>
+                  <div>
+                    <strong className="text-slate-900">Publication au catalogue officiel :</strong> Dès approbation, votre fiche devient publique et visible sur la plateforme.
+                  </div>
+                </div>
+                <div className="flex items-start gap-2.5">
+                  <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-700 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                    3
+                  </span>
+                  <div>
+                    <strong className="text-slate-900">Accès à l'Espace Candidat :</strong> Suivi des votes en temps réel, lien unique à partager à vos supporters et support direct.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Register() {
   const {
@@ -262,15 +489,34 @@ export default function Register() {
 
   if (!session?.user.email || !session.user.email_confirmed_at) {
     return (
-      <section className="max-w-xl mx-auto px-4 py-16 text-center space-y-4">
-        <h1 className="text-2xl font-bold text-slate-900 font-display">Compte candidat vérifié requis</h1>
-        <p className="text-sm text-slate-600 leading-relaxed">
-          Pour garantir l'intégrité de la compétition, vous devez être connecté avec une adresse e-mail vérifiée afin de déposer un dossier de candidature.
-        </p>
-        <Link to="/connexion" state={{ from: '/candidater' }}>
-          <Button variant="gold" className="font-bold">Se connecter ou créer un compte</Button>
-        </Link>
-      </section>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+        {/* Banner with Connexion CTA */}
+        <div className="bg-amber-500/10 border-2 border-amber-500/30 rounded-3xl p-6 sm:p-8 text-center space-y-4 shadow-xs">
+          <Badge variant="purple" className="text-xs">Inscriptions Ouvertes</Badge>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-display">
+            Candidatures aux PRIMART Awards 2028
+          </h1>
+          <p className="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+            Consultez le guide officiel ci-dessous pour découvrir les <strong>3 étapes</strong> et les <strong>données requises</strong> avant de postuler.
+            Pour enregistrer votre dossier officiel, vous devez être connecté avec une adresse e-mail vérifiée.
+          </p>
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link to="/connexion" state={{ from: '/candidater' }}>
+              <Button variant="gold" size="lg" className="font-bold text-slate-950 px-8 h-12 shadow-sm">
+                Se connecter ou créer un compte →
+              </Button>
+            </Link>
+            <Link to="/categories">
+              <Button variant="outline" size="lg" className="text-xs font-bold h-12">
+                Consulter les 52 prix officiels
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Full Candidate Documentation & Steps */}
+        <CandidateDocumentation defaultExpanded={true} isCollapsible={false} />
+      </div>
     );
   }
 
@@ -327,7 +573,7 @@ export default function Register() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
       
       {/* Title & Progress Steps */}
       <div className="text-center space-y-2">
@@ -363,6 +609,9 @@ export default function Register() {
         </div>
       </div>
 
+      {/* Interactive Collapsible Candidate Documentation */}
+      <CandidateDocumentation defaultExpanded={false} isCollapsible={true} />
+
       {/* Main Form Card */}
       <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs">
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -371,11 +620,16 @@ export default function Register() {
           {step === 1 && (
             <div className="space-y-4 animate-in fade-in-50 duration-200">
               <div className="border-b border-slate-100 pb-3">
-                <h3 className="font-display font-bold text-lg text-slate-900">
-                  Étape 1 : Identité & Coordonnées du Talent
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Ces informations permettront au jury d'identifier officiellement votre profil d'artiste.
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                  <h3 className="font-display font-bold text-lg text-slate-900">
+                    Étape 1 : Identité & Coordonnées du Talent
+                  </h3>
+                  <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-md self-start sm:self-auto">
+                    Champs obligatoires (*)
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-1">
+                  Votre nom de scène sera affiché publiquement sur votre fiche de vote. Votre nom civil reste strictement confidentiel auprès du comité d'organisation.
                 </p>
               </div>
 
@@ -482,13 +736,13 @@ export default function Register() {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4">
                 <Button
                   type="button"
                   variant="gold"
                   size="default"
                   onClick={handleStep1Next}
-                  className="text-xs font-bold"
+                  className="w-full sm:w-auto text-xs font-bold h-11 sm:h-10"
                 >
                   Continuer vers la sélection du prix <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
@@ -553,11 +807,11 @@ export default function Register() {
                 </span>
               </div>
 
-              <div className="flex justify-between pt-4">
-                <Button type="button" variant="outline" size="default" onClick={() => setStep(1)} className="text-xs">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4">
+                <Button type="button" variant="outline" size="default" onClick={() => setStep(1)} className="w-full sm:w-auto text-xs h-11 sm:h-10">
                   <ArrowLeft className="w-4 h-4 mr-1" /> Retour
                 </Button>
-                <Button type="button" variant="gold" size="default" onClick={handleStep2Next} className="text-xs font-bold">
+                <Button type="button" variant="gold" size="default" onClick={handleStep2Next} className="w-full sm:w-auto text-xs font-bold h-11 sm:h-10">
                   Continuer vers les médias & bio <ArrowRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>
@@ -574,6 +828,13 @@ export default function Register() {
                 <p className="text-xs text-slate-500 mt-0.5">
                   Complétez votre profil pour que les votants et le jury découvrent votre univers.
                 </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs text-amber-900 flex items-start gap-2.5">
+                <Sparkles className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <span>
+                  <strong>Conseil pour convaincre les votants :</strong> Rédigez une biographie vivante et ajoutez au moins un lien vidéo (YouTube, TikTok) pour permettre au public d'apprécier immédiatement vos performances artistiques.
+                </span>
               </div>
 
               <div className="space-y-1.5">
@@ -681,11 +942,11 @@ export default function Register() {
                 </label>
               </div>
 
-              <div className="flex justify-between pt-4">
-                <Button type="button" variant="outline" size="default" onClick={() => setStep(2)} className="text-xs">
+              <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4">
+                <Button type="button" variant="outline" size="default" onClick={() => setStep(2)} className="w-full sm:w-auto text-xs h-11 sm:h-10">
                   <ArrowLeft className="w-4 h-4 mr-1" /> Retour
                 </Button>
-                <Button type="submit" disabled={isSubmitting} variant="gold" size="default" className="text-xs font-bold">
+                <Button type="submit" disabled={isSubmitting} variant="gold" size="default" className="w-full sm:w-auto text-xs font-bold h-11 sm:h-10">
                   {isSubmitting ? 'Enregistrement en cours…' : 'Valider et Envoyer ma Candidature'}
                 </Button>
               </div>

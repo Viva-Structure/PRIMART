@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { CATEGORIES } from '@/data/categoriesData';
+import { PARTNER_CATEGORIES } from '@/data/partnerCategories';
 import { CountdownTimer } from '@/components/shared/CountdownTimer';
 import { CandidateCard } from '@/components/shared/CandidateCard';
 import {
@@ -20,6 +21,10 @@ import {
   Film,
   ShieldCheck,
   Globe2,
+  Building2,
+  Radio,
+  Smartphone,
+  Music3,
 } from 'lucide-react';
 
 const HERO_IMAGE =
@@ -47,6 +52,101 @@ const faqs = [
       "Chaque vote est horodaté et soumis à notre moteur d'analyse comportementale. Les votes automatisés ou suspects sont mis en quarantaine et examinés avant tout comptage.",
   },
 ];
+
+// Liste des partenaires officiels & mécènes
+// Note : pour ajouter un logo image, placez votre fichier dans public/logos/ et indiquez logo: '/logos/mon-fichier.png'
+const PARTNERS = [
+  {
+    id: 'min-culture',
+    name: 'Ministère de la Culture',
+    category: 'Institutionnels',
+    tag: 'Mécénat d’État',
+    logo: null,
+    short: 'MINCULT',
+  },
+  {
+    id: 'if',
+    name: 'Institut Français',
+    category: 'Institutionnels',
+    tag: 'Coopération culturelle',
+    logo: null,
+    short: 'IF',
+  },
+  {
+    id: 'unesco',
+    name: 'UNESCO Culture',
+    category: 'Institutionnels',
+    tag: 'Diversité & Patrimoine',
+    logo: null,
+    short: 'UNESCO',
+  },
+  {
+    id: 'canal-plus',
+    name: 'CANAL+ POP',
+    category: 'Médias & TV',
+    tag: 'Diffuseur Officiel',
+    logo: null,
+    short: 'CANAL+',
+  },
+  {
+    id: 'trace',
+    name: 'TRACE Africa',
+    category: 'Médias & TV',
+    tag: 'Chaîne Musicale',
+    logo: null,
+    short: 'TRACE',
+  },
+  {
+    id: 'tv5',
+    name: 'TV5 MONDE',
+    category: 'Médias & TV',
+    tag: 'Diffusion Mondiale',
+    logo: null,
+    short: 'TV5',
+  },
+  {
+    id: 'africa-radio',
+    name: 'AFRICA RADIO',
+    category: 'Médias & TV',
+    tag: 'Radio Panafricaine',
+    logo: null,
+    short: 'AFRICA N°1',
+  },
+  {
+    id: 'wave',
+    name: 'Wave',
+    category: 'Télécoms & Paiements',
+    tag: 'Paiement Mobile',
+    logo: null,
+    short: 'WAVE',
+  },
+  {
+    id: 'orange',
+    name: 'Orange',
+    category: 'Télécoms & Paiements',
+    tag: 'Télécom & Orange Money',
+    logo: null,
+    short: 'ORANGE',
+  },
+  {
+    id: 'mtn',
+    name: 'MTN MoMo',
+    category: 'Télécoms & Paiements',
+    tag: 'Paiement Mobile',
+    logo: null,
+    short: 'MTN',
+  },
+  {
+    id: 'moov',
+    name: 'Moov Africa',
+    category: 'Télécoms & Paiements',
+    tag: 'Réseau Télécom',
+    logo: null,
+    short: 'MOOV',
+  },
+];
+
+const PARTNER_CATEGORY_FILTERS = ['Tous', ...PARTNER_CATEGORIES];
 
 function AnimatedCount({ value, loading }) {
   const [count, setCount] = useState(0);
@@ -98,9 +198,10 @@ function CandidateSkeleton() {
 }
 
 export default function Home() {
-  const { candidates, eventSettings, loading, dataError, refreshData } = useApp();
+  const { candidates, approvedPartners, eventSettings, loading, dataError, refreshData } = useApp();
   const [isOnline, setIsOnline] = useState(() => navigator.onLine);
   const [catFilter, setCatFilter] = useState('Tous');
+  const [partnerCategory, setPartnerCategory] = useState('Tous');
 
   const accepted = useMemo(
     () =>
@@ -115,6 +216,34 @@ export default function Home() {
     return pool.slice(0, 10);
   }, [accepted, catFilter]);
 
+  const listedPartners = useMemo(
+    () => [
+      ...PARTNERS,
+      ...approvedPartners.map(partner => ({
+        id: partner.id,
+        name: partner.organizationName,
+        category: partner.category,
+        tag: 'Partenaire confirmé',
+        description: partner.publicDescription,
+        logo: null,
+        short: partner.organizationName
+          .split(/\s+/)
+          .slice(0, 3)
+          .map(word => word[0])
+          .join('')
+          .toUpperCase(),
+        website: partner.website,
+      })),
+    ],
+    [approvedPartners]
+  );
+
+  const filteredPartners = useMemo(
+    () => partnerCategory === 'Tous'
+      ? listedPartners
+      : listedPartners.filter(partner => partner.category === partnerCategory),
+    [listedPartners, partnerCategory]
+  );
   const prizeCount = CATEGORIES.reduce((t, c) => t + c.prizesCount, 0);
 
   useEffect(() => {
@@ -160,14 +289,17 @@ export default function Home() {
 
             {/* Pre-title */}
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-px w-12 bg-[#B8973E]" />
+              {/* < Music3 className="h-5 w-5 text-[#B8973E]" />
+              < Music3 className="h-5 w-5 text-[#B8973E]" />
+              < Music3 className="h-5 w-5 text-[#B8973E]" /> */}
+              {/* <div className="h-px w-12 bg-[#B8973E]" /> */}
               <span className="text-[#B8973E] text-xs font-semibold uppercase tracking-[.25em]">
                 {eventSettings.eventName || 'PRIMART Awards 2028'} · Festival des Talents d'Afrique
               </span>
             </div>
 
             {/* Main title */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.08] tracking-tight">
               Célébrer l'excellence<br />
               <span className="text-[#B8973E]">artistique africaine.</span>
             </h1>
@@ -180,7 +312,7 @@ export default function Home() {
             <div className="mt-10 flex flex-col sm:flex-row gap-4">
               <Link
                 to="/candidats"
-                className="inline-flex items-center justify-center h-13 px-8 bg-[#B8973E] text-[#0F1117] text-sm font-black tracking-wide hover:bg-[#C9A84C] transition-colors duration-300"
+                className="inline-flex items-center justify-center h-13 p-4 bg-[#B8973E] text-[#0F1117] text-sm font-black tracking-wide hover:bg-[#C9A84C] transition-colors duration-300"
               >
                 Découvrir les candidats
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -195,7 +327,7 @@ export default function Home() {
             </div>
 
             {/* Stats row */}
-            <div className="mt-16 pt-8 border-t border-white/10 grid grid-cols-3 gap-6 max-w-lg">
+            <div className="mt-16 pt-8 border-t border-white/10 grid grid-cols-3 gap-3 sm:gap-6 max-w-lg">
               {[
                 { value: prizeCount, label: 'Prix officiels' },
                 { value: CATEGORIES.length, label: 'Disciplines' },
@@ -265,7 +397,8 @@ export default function Home() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 flex items-center justify-center bg-stone-100 text-[#B8973E]">
-                      <CategoryIcon id={cat.id} />
+                      {/* <CategoryIcon id={cat.icon} /> */}
+                      <img src={cat.icon} alt="" className="h-10 w-10" />
                     </div>
                     <div>
                       <div className="font-bold text-[#0F1117] text-sm">{cat.name}</div>
@@ -428,6 +561,138 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════════
+          PARTENAIRES OFFICIELS & SPONSORS
+      ══════════════════════════════════════════════════ */}
+      <section className="bg-white border-b border-stone-200 py-20 sm:py-24" id="partenaires">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10">
+
+          {/* Section Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+            <div>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-px w-8 bg-[#B8973E]" />
+                <span className="text-[#B8973E] text-xs font-semibold uppercase tracking-[.25em]">
+                  Écosystème & Soutiens
+                </span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-[#0F1117] tracking-tight">
+                Nos Partenaires & Médias Officiels
+              </h2>
+              <p className="mt-3 text-sm text-stone-500 max-w-2xl leading-6">
+                Grandes institutions culturelles, diffuseurs panafricains et solutions de paiement qui soutiennent l'excellence artistique et garantissent l'impact du festival.
+              </p>
+            </div>
+
+            <Link
+              to="/partenariat"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#B8973E] hover:underline underline-offset-4 shrink-0"
+            >
+              Rejoindre nos partenaires →
+            </Link>
+          </div>
+
+          {/* Category Filter Tabs */}
+          <div className="flex flex-wrap gap-2 mb-10">
+            {PARTNER_CATEGORY_FILTERS.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setPartnerCategory(cat)}
+                className={`px-4 py-2 text-xs font-semibold tracking-wide border transition-all duration-200 ${
+                  partnerCategory === cat
+                    ? 'bg-[#0F1117] text-white border-[#0F1117] shadow-xs'
+                    : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400 hover:text-[#0F1117]'
+                }`}
+              >
+                {cat}
+                <span className="ml-1.5 opacity-60 text-[10px]">
+                  ({cat === 'Tous' ? listedPartners.length : listedPartners.filter((partner) => partner.category === cat).length})
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Partners Logo Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+            {filteredPartners.map((partner) => (
+              <div
+                key={partner.id}
+                className="group relative bg-[#F7F5F2] hover:bg-white border border-stone-200 hover:border-[#B8973E] transition-all duration-300 p-5 flex flex-col items-center justify-between min-h-[155px] text-center shadow-2xs hover:shadow-sm"
+              >
+                {/* Category tag */}
+                <span className="text-[9px] font-bold uppercase tracking-wider text-stone-400 group-hover:text-[#B8973E] transition-colors mb-2">
+                  {partner.tag}
+                </span>
+
+                {/* Logo or Emblem Display */}
+                <div className="flex items-center justify-center flex-1 my-2 w-full">
+                  {partner.logo ? (
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      className="max-h-12 max-w-[120px] object-contain filter grayscale group-hover:grayscale-0 opacity-80 group-hover:opacity-100 transition-all duration-300"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="w-10 h-10 rounded-sm bg-[#0F1117]/5 group-hover:bg-[#0F1117] flex items-center justify-center mb-2 transition-colors duration-300">
+                        {(partner.category === 'Institutionnels' || partner.category === 'Mécénat & Sponsors' || partner.category === 'Autres') && (
+                          <Building2 className="w-5 h-5 text-stone-600 group-hover:text-[#B8973E] transition-colors" />
+                        )}
+                        {partner.category === 'Médias & TV' && (
+                          <Radio className="w-5 h-5 text-stone-600 group-hover:text-[#B8973E] transition-colors" />
+                        )}
+                        {partner.category === 'Télécoms & Paiements' && (
+                          <Smartphone className="w-5 h-5 text-stone-600 group-hover:text-[#B8973E] transition-colors" />
+                        )}
+                      </div>
+                      <span className="font-black text-xs tracking-tight text-[#0F1117] uppercase group-hover:text-[#B8973E] transition-colors">
+                        {partner.short}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Partner Official Name */}
+                <span className="text-xs font-semibold text-stone-700 group-hover:text-[#0F1117] transition-colors mt-2 line-clamp-1">
+                  {partner.name}
+                </span>
+                {partner.description && (
+                  <span className="mt-1 line-clamp-2 text-[10px] leading-4 text-stone-500">{partner.description}</span>
+                )}
+                {partner.website && (
+                  <a
+                    href={partner.website}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 text-[10px] font-semibold text-[#B8973E] hover:underline"
+                  >
+                    Visiter le site
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Trust Banner / Sponsor Dossier CTA */}
+          <div className="mt-12 p-6 bg-[#F7F5F2] border border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-600">
+            <div className="flex items-center gap-3">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+              <span>
+                Plateforme certifiée : audit cryptographique des votes, traçabilité et conformité télécoms.
+              </span>
+            </div>
+            <a
+              href="mailto:support@primart2028.org?subject=Demande%20Dossier%20Sponsoring%20PRIMART"
+              className="text-[#B8973E] font-semibold hover:underline underline-offset-4 shrink-0"
+            >
+              Demander le dossier de partenariat (PDF) →
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
           PARTNER INVITATION — DARK SECTION
       ══════════════════════════════════════════════════ */}
       <section className="bg-[#0F1117] relative overflow-hidden">
@@ -449,8 +714,8 @@ export default function Home() {
           </div>
           <div className="shrink-0">
             <a
-              href="mailto:support@primart2028.org?subject=Partenariat%20PRIMART"
-              className="inline-flex items-center gap-2 h-13 px-8 bg-[#B8973E] text-[#0F1117] text-sm font-black tracking-wide hover:bg-[#C9A84C] transition-colors whitespace-nowrap"
+              href="/partenariat"
+              className="inline-flex items-center gap-2 h-13 p-4 bg-[#B8973E] text-[#0F1117] text-sm font-black tracking-wide hover:bg-[#C9A84C] transition-colors whitespace-nowrap"
             >
               <HeartHandshake className="h-4 w-4" />
               Devenir partenaire officiel

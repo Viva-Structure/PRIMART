@@ -109,7 +109,7 @@ export default function CandidateDetailPage() {
   const votesToLeader = candidate.votesToLeader || 0;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-36 lg:pb-10 space-y-10">
       
       {/* Back link */}
       <div>
@@ -281,6 +281,35 @@ export default function CandidateDetailPage() {
         </div>
 
       </div>
+
+      {/* Sticky Mobile Action Bar (PWA Style) */}
+      <aside aria-label="Actions rapides pour mobile" className="lg:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom))] inset-x-0 z-30 bg-[#0F1117]/95 backdrop-blur-md border-t border-white/10 px-4 py-2.5 shadow-2xl flex items-center justify-between gap-3">
+        <div className="flex flex-col min-w-0">
+          <span className="text-[11px] text-stone-400 truncate">Total des votes</span>
+          <span className="text-base font-extrabold text-[#B8973E] font-display leading-tight">
+            {(candidate.votesTotal || 0).toLocaleString()} <span className="text-[10px] text-stone-400 font-normal">pts</span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            onClick={() => setIsShareOpen(true)}
+            variant="outline"
+            size="sm"
+            className="h-10 px-3 border-white/20 text-white hover:bg-white/10"
+            aria-label="Partager le profil"
+          >
+            <Share2 className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={() => setIsVoteOpen(true)}
+            size="sm"
+            className="h-10 px-5 bg-[#B8973E] hover:bg-[#a68633] text-black font-bold shadow-md tracking-wide"
+          >
+            <Heart className="w-4 h-4 mr-1.5 fill-black" />
+            Voter
+          </Button>
+        </div>
+      </aside>
 
       {/* Modals */}
       <VoteModal

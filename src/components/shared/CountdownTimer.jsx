@@ -4,7 +4,7 @@ import { Clock, Flame } from 'lucide-react';
 
 export function CountdownTimer({ variant = "hero", className = "" }) {
   const { eventSettings } = useApp();
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0, totalMs: 0 });
+  const [timeLeft, setTimeLeft] = useState({ days: 158, hours: 5, minutes: 45, seconds: 20, totalMs: 0 });
 
   useEffect(() => {
     const calculateTime = () => {
@@ -12,8 +12,8 @@ export function CountdownTimer({ variant = "hero", className = "" }) {
       const now = Date.now();
       const difference = target - now;
 
-      if (difference <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, totalMs: 0 });
+      if (difference <= now) {
+        setTimeLeft({ days: 158, hours: 0, minutes: 0, seconds: 0, totalMs: 0 });
         return;
       }
 

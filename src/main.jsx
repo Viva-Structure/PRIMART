@@ -22,6 +22,9 @@ const AdminVotes = lazy(() => import('./views/admin/AdminVotes.jsx'));
 const AdminPayments = lazy(() => import('./views/admin/AdminPayments.jsx'));
 const AdminSettings = lazy(() => import('./views/admin/AdminSettings.jsx'));
 const AdminCategories = lazy(() => import('./views/admin/AdminCategories.jsx'));
+const AdminPartnerships = lazy(() => import('./views/admin/AdminPartnerships.jsx'));
+const PartnerApplication = lazy(() => import('./views/PartnerApplication.jsx'));
+const ContactPage = lazy(() => import('./views/ContactPage.jsx'));
 
 const router = createBrowserRouter([
   {
@@ -67,6 +70,14 @@ const router = createBrowserRouter([
       {
         path: 'candidat-dashboard',
         element: <CandidateDashboard />,
+      },
+      {
+        path: 'partenariat',
+        element: <PartnerApplication />,
+      },
+      {
+        path: 'contact',
+        element: <ContactPage />,
       },
     ],
   },
@@ -131,6 +142,15 @@ const router = createBrowserRouter([
     element: (
       <>
         <AdminCategories />
+        <ToastContainer />
+      </>
+    ),
+  },
+  {
+    path: '/admin/partenariats',
+    element: (
+      <>
+        <AdminPartnerships />
         <ToastContainer />
       </>
     ),

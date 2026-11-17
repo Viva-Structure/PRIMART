@@ -92,7 +92,7 @@ export default function CategoriesPage() {
                     {category.prizesCount} Prix
                   </Badge>
                   <Link to={`/candidats?category=${category.name}`}>
-                    <Button size="sm" variant="outline" className="text-xs">
+                    <Button size="sm" variant="outline" className="text-xs text-black">
                       Voir les candidats
                     </Button>
                   </Link>
