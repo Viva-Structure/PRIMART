@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { getCandidateShareUrl } from '@/lib/candidateShareUrl';
+import { getCandidateVoteUrl, getCandidateShareUrl } from '@/lib/candidateShareUrl';
+import { CandidateQRCode } from '@/components/shared/CandidateQRCode';
 import {
   Trophy,
   Flame,
@@ -76,13 +77,14 @@ export default function CandidateDashboard() {
 
   const gap = candidate.votesToLeader || 0;
 
-  const shareUrl = getCandidateShareUrl(candidate.id);
-  const promoText = `🚨 URGENT : Les votes pour PRIMART 2028 sont ouverts ! Soutenez ${candidate.stageName || candidate.name} dans la catégorie "${candidate.category}" - ${candidate.prize}. Chaque vote compte, votez gratuitement dès maintenant sur : ${shareUrl} 🏆`;
+  const voteUrl = getCandidateVoteUrl(candidate.id);
+  const shareUrl = getCandidateShareUrl(candidate.id, { directVote: true });
+  const promoText = `🚨 URGENT : Les votes pour PRIMART 2028 sont ouverts ! Soutenez ${candidate.stageName || candidate.name} dans la catégorie "${candidate.category}" - ${candidate.prize}.\nChaque vote compte, votez gratuitement dès maintenant sur ce lien direct : ${voteUrl} 🏆`;
 
   const copyLink = () => {
-    navigator.clipboard.writeText(shareUrl);
+    navigator.clipboard.writeText(voteUrl);
     setCopiedLink(true);
-    showToast("Lien copié !", "Lien direct copié dans votre presse-papier.", "success");
+    showToast("Lien direct copié !", "Lien direct ouvrant le formulaire de vote copié.", "success");
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
@@ -197,34 +199,38 @@ export default function CandidateDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* Direct Link & QR Code */}
-            <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-4">
-              <h3 className="font-display font-bold text-base text-slate-900 flex items-center gap-2">
-                <Share2 className="w-4 h-4 text-amber-500" /> Votre Lien Personnel de Vote
-              </h3>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Ce lien mène directement à votre fiche avec le formulaire de vote pré-ouvert. Partagez-le avec votre communauté.
-              </p>
+            <div className="p-6 rounded-2xl border border-slate-200 bg-white shadow-sm space-y-5">
+              <div>
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display font-bold text-base text-slate-900 flex items-center gap-2">
+                    <Share2 className="w-4 h-4 text-amber-500" /> Votre Lien Direct de Vote
+                  </h3>
+                  <span className="text-[10px] text-amber-800 bg-amber-50 border border-amber-200 font-bold px-2 py-0.5 rounded-full">
+                    Ouvre directement le formulaire
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 leading-relaxed mt-1">
+                  Ce lien amène directement vos supporters sur votre profil avec la fenêtre de vote ouverte.
+                </p>
+              </div>
 
               <div className="flex gap-2">
-                <Input readOnly value={shareUrl} className="text-xs font-mono truncate" />
+                <Input readOnly value={voteUrl} className="text-xs font-mono truncate" />
                 <Button size="sm" variant={copiedLink ? "gold" : "outline"} onClick={copyLink} className="shrink-0 text-xs">
                   {copiedLink ? <Check className="w-4 h-4 mr-1" /> : <Copy className="w-4 h-4 mr-1" />}
                   {copiedLink ? "Copié !" : "Copier"}
                 </Button>
               </div>
 
-              {/* QR Code */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center gap-4">
-                <div className="w-16 h-16 bg-white border border-slate-200 p-1 rounded-lg flex items-center justify-center shrink-0 shadow-xs">
-                  <QrCode className="w-14 h-14 text-slate-700" />
-                </div>
-                <div className="space-y-1 text-xs">
-                  <h5 className="font-bold text-slate-900">QR Code de Campagne</h5>
-                  <p className="text-slate-500 text-[11px]">Téléchargeable pour vos affiches, flyers de concert et stories Instagram.</p>
-                  <Button size="sm" variant="ghost" className="text-[11px] h-7 text-amber-600 p-0 hover:underline">
-                    Télécharger l'image PNG
-                  </Button>
-                </div>
+              {/* QR Code & Affiche officielle de campagne */}
+              <div className="p-5 rounded-2xl bg-slate-50/70 border border-slate-200">
+                <CandidateQRCode
+                  candidate={candidate}
+                  url={voteUrl}
+                  size={160}
+                  showDownload={true}
+                  showBadge={true}
+                />
               </div>
             </div>
 

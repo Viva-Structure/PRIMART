@@ -13,9 +13,9 @@ import {
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { eventSettings, session } = useApp();
+  const { eventSettings, session, isAdmin, adminRoleLoading } = useApp();
   const accountAction = session
-    ? { label: 'Mon espace', path: '/candidat-dashboard' }
+    ? { label: 'Mon espace', path: isAdmin ? '/admin' : '/candidat-dashboard' }
     : { label: 'Connexion', path: '/connexion' };
 
   const navLinks = [
@@ -95,10 +95,19 @@ export function Navbar() {
                 </button>
               </Link>
 
-              <Link to={accountAction.path}>
-                <button className="h-10 px-5 border border-stone-300 text-[#0F1117] text-sm font-semibold hover:border-[#B8973E] hover:text-[#B8973E] transition-colors duration-300 tracking-wide">
+              <Link
+                to={accountAction.path}
+                onClick={event => {
+                  if (session && adminRoleLoading) event.preventDefault();
+                }}
+                aria-disabled={session && adminRoleLoading}
+              >
+                <button
+                  disabled={session && adminRoleLoading}
+                  className="h-10 px-5 border border-stone-300 text-[#0F1117] text-sm font-semibold hover:border-[#B8973E] hover:text-[#B8973E] transition-colors duration-300 tracking-wide disabled:cursor-wait disabled:opacity-60"
+                >
                   {session ? <UserCheck className="mr-1.5 inline h-4 w-4" /> : <LogIn className="mr-1.5 inline h-4 w-4" />}
-                  {accountAction.label}
+                  {session && adminRoleLoading ? 'Vérification…' : accountAction.label}
                 </button>
               </Link>
 
@@ -144,10 +153,23 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-4 space-y-2">
-            <Link to={accountAction.path} onClick={() => setMobileMenuOpen(false)}>
-              <button className="w-full h-11 border border-stone-300 text-sm font-semibold text-[#0F1117]">
+            <Link
+              to={accountAction.path}
+              onClick={event => {
+                if (session && adminRoleLoading) {
+                  event.preventDefault();
+                  return;
+                }
+                setMobileMenuOpen(false);
+              }}
+              aria-disabled={session && adminRoleLoading}
+            >
+              <button
+                disabled={session && adminRoleLoading}
+                className="w-full h-11 border border-stone-300 text-sm font-semibold text-[#0F1117] disabled:cursor-wait disabled:opacity-60"
+              >
                 {session ? <UserCheck className="mr-2 inline h-4 w-4" /> : <LogIn className="mr-2 inline h-4 w-4" />}
-                {accountAction.label}
+                {session && adminRoleLoading ? 'Vérification…' : accountAction.label}
               </button>
             </Link>
             <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>

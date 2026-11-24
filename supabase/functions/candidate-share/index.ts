@@ -76,7 +76,8 @@ Deno.serve(async (request) => {
     const name = candidate.stage_name || candidate.name;
     const title = `${name} | PRIMART 2028`;
     const description = `Découvrez ${name}, candidat${category ? ` dans la catégorie ${category}` : ''}${prize ? ` pour le prix ${prize}` : ''}.`;
-    const canonicalUrl = `${frontendUrl.origin}/candidat/${candidateId}`;
+    const shouldVote = new URL(request.url).searchParams.get('vote') === 'true';
+    const canonicalUrl = `${frontendUrl.origin}/candidat/${candidateId}${shouldVote ? '?vote=true' : ''}`;
     const photoUrl = candidate.photo_url ? new URL(candidate.photo_url, projectUrl) : null;
     const imageUrl = photoUrl?.protocol === 'https:' ? photoUrl.href : '';
     const safeTitle = escapeHtml(title);

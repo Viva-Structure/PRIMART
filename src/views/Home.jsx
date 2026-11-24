@@ -396,7 +396,7 @@ export default function Home() {
                   className="flex items-center justify-between py-4 border-b border-stone-100"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 flex items-center justify-center bg-stone-100 text-[#B8973E]">
+                    <div className="w-9 h-9 flex items-center justify-center text-[#B8973E]">
                       {/* <CategoryIcon id={cat.icon} /> */}
                       <img src={cat.icon} alt="" className="h-10 w-10" />
                     </div>

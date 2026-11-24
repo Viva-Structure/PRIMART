@@ -455,12 +455,22 @@ export function AppProvider({ children }) {
   }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
-    const { data, error } = await getSupabaseClient().auth.signInWithPassword({
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim().toLowerCase(),
       password,
     });
     if (error) throw error;
-    return data;
+    const { data: roles, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', data.user.id);
+    if (roleError) throw roleError;
+    const userIsAdmin = roles.some(role => role.role === 'admin');
+    setIsAdmin(userIsAdmin);
+    setAdminRoleError('');
+    setAdminRoleLoading(false);
+    return { ...data, isAdmin: userIsAdmin };
   }, []);
 
   const signOut = useCallback(async () => {

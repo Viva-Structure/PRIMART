@@ -6,15 +6,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function AccountAccess() {
-  const { signIn, signUp, signOut, session } = useApp();
+  const { signIn, signUp, signOut, session, isAdmin, adminRoleLoading, adminRoleError } = useApp();
   const location = useLocation();
   const navigate = useNavigate();
   const requestedPath = location.state?.from;
-  const redirectTo = typeof requestedPath === 'string'
+  const safeRequestedPath = typeof requestedPath === 'string'
     && requestedPath.startsWith('/')
     && !requestedPath.startsWith('//')
     ? requestedPath
-    : '/candidat-dashboard';
+    : null;
+  const getRedirectPath = (userIsAdmin) => {
+    if (userIsAdmin) {
+      return safeRequestedPath === '/admin' || safeRequestedPath?.startsWith('/admin/')
+        ? safeRequestedPath
+        : '/admin';
+    }
+    if (safeRequestedPath === '/admin' || safeRequestedPath?.startsWith('/admin/')) {
+      return '/candidat-dashboard';
+    }
+    return safeRequestedPath || '/candidat-dashboard';
+  };
   const [mode, setMode] = useState('signin');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -24,11 +35,17 @@ export default function AccountAccess() {
   const [busy, setBusy] = useState(false);
 
   if (session?.user.email && session.user.email_confirmed_at) {
+    if (adminRoleLoading) {
+      return <p role="status" className="py-16 text-center text-sm text-slate-600">Vérification de votre espace…</p>;
+    }
     return (
       <section className="max-w-lg mx-auto px-4 py-16 text-center space-y-4">
         <h1 className="text-2xl font-bold text-slate-900">Vous êtes connecté</h1>
-        <p className="text-sm text-slate-600">Continuez vers votre espace candidat.</p>
-        <Button onClick={() => navigate(redirectTo, { replace: true })}>Continuer</Button>
+        <p className="text-sm text-slate-600">
+          Continuez vers votre espace {isAdmin ? 'administrateur' : 'candidat'}.
+        </p>
+        {adminRoleError && <p role="alert" className="text-sm text-red-700">{adminRoleError}</p>}
+        <Button onClick={() => navigate(getRedirectPath(isAdmin), { replace: true })}>Continuer</Button>
       </section>
     );
   }
@@ -53,14 +70,14 @@ export default function AccountAccess() {
       if (mode === 'signup') {
         const result = await signUp({ email, password, name });
         if (result.session) {
-          navigate(redirectTo, { replace: true });
+          navigate(getRedirectPath(false), { replace: true });
         } else {
           setNotice('Compte créé. Vérifiez votre e-mail, puis connectez-vous pour continuer.');
           setMode('signin');
         }
       } else {
-        await signIn({ email, password });
-        navigate(redirectTo, { replace: true });
+        const result = await signIn({ email, password });
+        navigate(getRedirectPath(result.isAdmin), { replace: true });
       }
     } catch (requestError) {
       setError(requestError.message || 'La demande de connexion a échoué.');

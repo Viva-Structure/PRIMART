@@ -171,8 +171,7 @@ function CandidateDocumentation({ defaultExpanded = true, isCollapsible = false 
                   <li><strong>Extrait Audio</strong> : Échantillon sonore (pour musiciens)</li>
                   <li><strong>Réseaux sociaux</strong> : Instagram, Facebook, TikTok</li>
                 </ul>
-              </div>
-
+              </div>                                                                                                                                                        
             </div>
           </div>
 

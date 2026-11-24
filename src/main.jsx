@@ -26,10 +26,12 @@ const AdminPartnerships = lazy(() => import('./views/admin/AdminPartnerships.jsx
 const PartnerApplication = lazy(() => import('./views/PartnerApplication.jsx'));
 const ContactPage = lazy(() => import('./views/ContactPage.jsx'));
 
+const isSignupConfirmation = new URLSearchParams(window.location.hash.slice(1)).get('type') === 'signup';
+
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <App isSignupConfirmation={isSignupConfirmation} />,
     children: [
       {
         index: true,

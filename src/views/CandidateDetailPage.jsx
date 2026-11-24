@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { useApp } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,12 +22,22 @@ import {
 
 export default function CandidateDetailPage() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const { candidates, loading, dataError, refreshData } = useApp();
 
   const [isVoteOpen, setIsVoteOpen] = useState(false);
   const [isShareOpen, setIsShareOpen] = useState(false);
 
   const candidate = candidates.find(c => c.id === id);
+
+  // Ouverture automatique de la modale de vote si ?vote=true est présent dans le lien ou QR Code
+  useEffect(() => {
+    if (!candidate) return;
+    const shouldVote = searchParams.get('vote') === 'true' || searchParams.get('vote') === '1';
+    if (shouldVote) {
+      setIsVoteOpen(true);
+    }
+  }, [candidate, searchParams]);
 
   useEffect(() => {
     if (!candidate) return undefined;
